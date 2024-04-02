@@ -1,10 +1,10 @@
 import { GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import EventEmitter from '../utils/EventEmitter';
+
 import Time from '../utils/Time';
 import Sizes from '../utils/Sizes';
 
-export default class Canvas extends EventEmitter {
+export default class Canvas {
   scene: Scene;
   time: Time;
   sizes: Sizes;
@@ -16,8 +16,6 @@ export default class Canvas extends EventEmitter {
   controls = this.initControls();
 
   constructor() {
-    super();
-
     this.scene = new Scene();
     this.time = new Time();
     this.sizes = new Sizes();
