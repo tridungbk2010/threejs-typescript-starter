@@ -26,5 +26,5 @@ button.style.padding = '10px';
 
 // add event listener to stop rendering
 button.addEventListener('click', () => {
-  canvas.detroy();
+  canvas.destroy();
 });

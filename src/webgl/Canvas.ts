@@ -83,7 +83,7 @@ export default class Canvas extends EventEmitter {
     this.renderer.render(this.scene, this.camera);
   }
 
-  detroy() {
+  destroy() {
     if (!this.isRunning) return;
 
     // console log stop rendering
