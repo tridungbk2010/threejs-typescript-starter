@@ -1,30 +1,56 @@
-import { GridHelper, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import {
+  CineonToneMapping,
+  GridHelper,
+  PCFSoftShadowMap,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer,
+} from 'three';
+
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import Time from '../utils/Time';
 import Sizes from '../utils/Sizes';
+import Light from './Light';
 
 export default class Canvas {
   scene: Scene;
   time: Time;
   sizes: Sizes;
+  renderer: WebGLRenderer;
+  camera: PerspectiveCamera;
+  controls: OrbitControls;
 
   public isRunning = false;
-
-  camera = this.initCamera();
-  renderer = this.initRenderer();
-  controls = this.initControls();
 
   constructor() {
     this.scene = new Scene();
     this.time = new Time();
     this.sizes = new Sizes();
 
+    this.renderer = new WebGLRenderer();
+
+    this.configRenderer();
+
+    this.camera = new PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    this.camera.position.set(0, 5, 10);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.update();
+
     //grid helper
     const gridHelper = new GridHelper(100, 40, 0x0000ff, 0x808080);
     gridHelper.position.y = 0;
     gridHelper.position.x = 0;
     this.scene.add(gridHelper);
+
+    const light = new Light();
+    this.scene.add(light.sunLight);
 
     // Console.log start rendering
     console.log('Start rendering');
@@ -39,31 +65,15 @@ export default class Canvas {
     });
   }
 
-  private initCamera() {
-    const camera = new PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-
-    camera.position.set(0, 5, 10);
-
-    return camera;
-  }
-
-  private initRenderer() {
-    const renderer = new WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    return renderer;
-  }
-
-  private initControls() {
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.update();
-    return controls;
+  private configRenderer() {
+    this.renderer.toneMapping = CineonToneMapping;
+    this.renderer.toneMappingExposure = 1.75;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.renderer.setClearColor('#211d20');
+    this.renderer.setSize(this.sizes.width, this.sizes.height);
+    this.renderer.setPixelRatio(this.sizes.pixelRatio);
+    document.body.appendChild(this.renderer.domElement);
   }
 
   updateSize() {
